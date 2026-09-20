@@ -1,0 +1,77 @@
+modules = ["nodejs-20", "web"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Settings API Server"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Settings API Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
+waitForPort = 3001
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
+localPort = 3100
+externalPort = 3002
+
+[[ports]]
+localPort = 3456
+externalPort = 3003
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["node", "server.js"]
+
+[userenv]
+
+[userenv.shared]
+NEXT_PUBLIC_DERIV_APP_ID = "33FxewyqGJ899zO3Tjwzt"

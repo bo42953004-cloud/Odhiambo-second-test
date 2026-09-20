@@ -1,0 +1,10 @@
+- [Global admin settings architecture](global-admin-settings.md) — Express backend on port 3001 proxied via rsbuild; settings in admin-settings.json
+- [Bot loading unknown blocks](bot-loading-fix.md) — Changed hard-reject to graceful skip so third-party bots load partial content
+- [Announcement ticker context issue](announcement-ticker-context.md) — Layout is outside AdminPortalProvider so ticker reads localStorage directly, not via context
+- [Block library registration](block-library.md) — Custom blocks stored as JS strings in settings, registered via setInterval polling for window.Blockly readiness
+- [Deriv OAuth app ID wiring](deriv-oauth-wiring.md) — App ID in env var NEXT_PUBLIC_DERIV_APP_ID (build-time); admin can override via localStorage admin_portal_settings.derivAppId and derivCallbackDomain
+- [Header ticker + logo animation](header-ticker-logo-anim.md) — HeaderTicker.tsx in app-logo/; uses api_base.api ticks subscription + MobX reaction on chart_store.symbol; logoTextAnimation in TAdminSettings
+- [Landing page redirect pattern](landing-redirect.md) — sessionStorage 'app_entered' gates /landing redirect in app-content.jsx; Continue to Site sets the flag
+- [Digit Analysis tool](digit-analysis-tool.md) — native React component in analysis-tools/DigitAnalysis.tsx; 1000-tick circles, rank colors, live deduped ticks, and bot-market sync
+- [Production deployment architecture](production-deployment.md) — Published builds must run server.js so /api/settings and SPA fallback remain available; static-only hosting drops admin persistence
+- [Theme variable scope](theme-variable-scope.md) — Apply resolved theme variables to html and body because platform theme classes can override inherited root values

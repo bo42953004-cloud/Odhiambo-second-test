@@ -1,0 +1,56 @@
+You are a full-stack web developer tasked with building a comprehensive admin portal system for a bot builder and analysis platform.
+
+**Core Functionality:**
+
+Build an admin portal with the following access mechanism and features:
+
+1. **Admin Access Control**
+   - Trigger portal with keyboard shortcut: Ctrl+Shift+A
+   - Display password authentication modal on trigger
+   - Set default password to a placeholder (e.g., "admin123") that the admin can change within the portal
+   - Lock portal access until correct password is entered
+
+2. **Admin Dashboard Tabs & Management**
+   
+   Create an admin interface with multiple configurable tabs:
+   
+   - **Free Bots Tab**: Display at least 5 bot cards with attractive design and imagery. Each card should be clickable and load the selected bot into the site's bot builder tab. Cards should include bot name, description, and preview imagery.
+   
+   - **Analysis Tools Tab**: Allow admin to manage and display at least 4 analysis tools. Admin can add, remove, or organize tools that appear in this section.
+   
+   - **TradingView Integration Tab**: Embed charts from charts.deriv.com directly into the site (iframe or embedded widget—do NOT open in new browser tabs).
+   
+   - **Additional Tabs**: Include placeholders for future useful tabs the admin may want to add later.
+
+3. **Site Customization Controls**
+   
+   - **Logo Management**: Upload and change the site logo
+   - **About Section**: Edit and manage site description, branding text, and "About" content
+   - **Color Scheme Customization**: Allow admin to set:
+     - Active tab color
+     - Inactive tab color
+     - General site color/theme
+   - Apply all color changes across the site immediately upon save
+
+4. **Loading Animation System**
+   
+   - Implement 5 different, visually appealing loaders/spinners for page refresh and loading states
+   - Allow admin to select which loader applies site-wide
+   - Apply selected loader globally when page refreshes or content loads
+
+**Technical Requirements:**
+
+- Store admin settings (password, colors, logo, customization choices) in a persistent backend or local storage that persists across sessions
+- Ensure the admin portal is hidden from regular users and only accessible via the keyboard shortcut
+- All embedded content (TradingView charts, bot builder) should load within the page, not open external windows
+- The bot cards should be dynamically loadable into the bot builder interface
+- All customization changes should apply to the site in real-time or upon save
+
+**Design & UX:**
+
+- Make the admin portal professional and intuitive
+- Bot cards should be visually attractive with hover effects
+- All admin controls should be clearly labeled and organized
+- Ensure responsive design
+
+Build this as a complete, functional system ready for deployment.

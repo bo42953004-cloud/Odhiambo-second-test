@@ -1,0 +1,18 @@
+FROM node:22
+WORKDIR /app
+
+# npm 10.x crashes with "Exit handler never called!" on this project's dependency
+# tree, leaving node_modules corrupt. Use pnpm instead, which installs reliably.
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Install dependencies on the container's overlay filesystem.
+COPY package.json package-lock.json ./
+RUN pnpm import || true && pnpm install --no-frozen-lockfile || true
+# Create the rsbuild bin link so `npm run dev` can find it.
+RUN mkdir -p node_modules/.bin && \
+    ln -sf ../@rsbuild/core/bin/rsbuild.js node_modules/.bin/rsbuild
+
+# Generate brand CSS (needs brand.config.json + scripts/)
+COPY brand.config.json ./
+COPY scripts ./scripts
+RUN node scripts/generate-brand-css.js || true

@@ -1,0 +1,403 @@
+.analysis-page {
+    display: flex;
+    height: 100%;
+    min-height: calc(100vh - 16rem);
+    overflow: hidden;
+    position: relative;
+
+    // ─── Collapsible Sidebar ────────────────────────────────────────────────
+    &__sidebar {
+        width: 220px;
+        flex-shrink: 0;
+        background: var(--general-section-1);
+        border-right: 1px solid var(--border-normal, #2a3441);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: width 0.25s ease;
+        position: relative;
+
+        &--collapsed {
+            width: 48px;
+        }
+    }
+
+    &__sidebar-toggle {
+        position: absolute;
+        top: 10px;
+        right: 8px;
+        z-index: 2;
+        background: var(--general-main-1);
+        border: 1px solid var(--border-normal, #334155);
+        border-radius: 6px;
+        color: var(--text-general);
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 10px;
+        transition: background 0.15s;
+
+        &:hover { background: rgba(255,255,255,0.1); }
+    }
+
+    &__sidebar-toggle-inline {
+        background: none;
+        border: none;
+        color: var(--text-general);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px;
+        border-radius: 4px;
+        opacity: 0.6;
+
+        &:hover { opacity: 1; }
+    }
+
+    &__sidebar-header {
+        padding: 14px 14px 8px 14px;
+        border-bottom: 1px solid var(--border-normal, #2a3441);
+        padding-right: 40px;
+    }
+
+    &__sidebar-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-prominent);
+        margin: 0;
+    }
+
+    &__tool-list {
+        padding: 8px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    &__sidebar-icons {
+        padding: 44px 4px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    // ─── Frame Area ─────────────────────────────────────────────────────────
+    &__frame-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    &__frame-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        background: var(--general-section-1);
+        border-bottom: 1px solid var(--border-normal, #2a3441);
+        flex-shrink: 0;
+        min-height: 44px;
+    }
+
+    &__frame-icon { font-size: 16px; }
+
+    &__frame-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-prominent);
+        white-space: nowrap;
+    }
+
+    &__frame-desc {
+        font-size: 1.1rem;
+        color: var(--text-general);
+        opacity: 0.5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+    }
+
+    &__frame-wrapper {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    &__frame-loader {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: var(--general-main-1);
+        z-index: 2;
+        color: var(--text-general);
+        font-size: 1.3rem;
+    }
+
+    &__frame-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-normal, #2a3441);
+        border-top-color: var(--admin-color-primary, #21cde4);
+        border-radius: 50%;
+        animation: at-spin 0.8s linear infinite;
+    }
+
+    &__iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    &__placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: 12px;
+        color: var(--text-general);
+        opacity: 0.5;
+
+        span { font-size: 48px; }
+        p { font-size: 1.4rem; }
+    }
+
+    &__empty {
+        padding: 16px;
+        text-align: center;
+        color: var(--text-general);
+        font-size: 1.2rem;
+        opacity: 0.6;
+    }
+
+    &__empty-hint {
+        font-size: 1.1rem;
+        margin-top: 6px;
+        opacity: 0.7;
+    }
+}
+
+// ─── Tool sidebar buttons ─────────────────────────────────────────────────────
+
+.analysis-tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text-general);
+    transition: background 0.15s;
+    position: relative;
+
+    &:hover { background: var(--general-main-1); }
+
+    &--active {
+        background: rgba(33, 205, 228, 0.1);
+        color: var(--admin-color-primary, #21cde4);
+    }
+
+    &__icon {
+        font-size: 16px;
+        width: 22px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    &__name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__desc {
+        font-size: 1.0rem;
+        opacity: 0.55;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__active-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--admin-color-primary, #21cde4);
+        flex-shrink: 0;
+    }
+}
+
+// ─── Native tool area (fills remaining space, allows internal scroll) ────────
+.analysis-page__native-area {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    // The digit analysis component fills this area
+    .da {
+        flex: 1;
+        min-height: 0;
+    }
+}
+
+// ─── Mobile tool subtabs ─────────────────────────────────────────────────────
+// The tool selector remains the same functional sidebar, but becomes the
+// horizontal subtab row directly beneath the platform's main tabs on phones.
+@media (max-width: 760px) {
+    .analysis-page {
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .analysis-page__sidebar {
+        width: 100%;
+        height: auto;
+        flex: 0 0 auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-normal, #2a3441);
+        overflow: visible;
+
+        &--collapsed {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    .analysis-page__sidebar-toggle {
+        display: none;
+    }
+
+    .analysis-page__sidebar-header {
+        display: none;
+    }
+
+    .analysis-page__tool-list {
+        flex: 0 0 auto;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 4px;
+        padding: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        box-shadow: none;
+        mask-image: none;
+        -webkit-mask-image: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .analysis-tool-btn {
+        width: auto;
+        min-width: max-content;
+        flex: 0 0 auto;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 11px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        text-align: center;
+
+        &--active {
+            border-color: var(--admin-color-primary, #21cde4);
+        }
+
+        &__info {
+            flex: 0 0 auto;
+        }
+
+        &__name {
+            font-size: 1.1rem;
+        }
+
+        &__desc,
+        &__active-dot {
+            display: none;
+        }
+    }
+
+    .analysis-page__sidebar-icons {
+        flex-direction: row;
+        align-items: center;
+        flex: 0 0 auto;
+        padding: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        box-shadow: none;
+        mask-image: none;
+        -webkit-mask-image: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .analysis-page__frame-area {
+        min-height: 0;
+        flex: 1 1 auto;
+    }
+}
+
+// ─── Native tool button style (slightly differentiated from iframe tools) ─────
+.analysis-tool-btn--native {
+    border-left: 3px solid rgba(33, 205, 228, 0.4);
+}
+
+// ─── Icon-only mode (collapsed sidebar) ──────────────────────────────────────
+
+.analysis-sidebar-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover { background: var(--general-main-1); }
+
+    &--active {
+        background: rgba(33, 205, 228, 0.12);
+        border-color: var(--admin-color-primary, #21cde4);
+    }
+}
+
+@keyframes at-spin { to { transform: rotate(360deg); } }

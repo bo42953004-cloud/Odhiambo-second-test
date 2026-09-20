@@ -1,0 +1,269 @@
+.app-header {
+    &__logo {
+        padding-inline-start: 1.6rem;
+        padding-inline-end: 1.6rem;
+        height: auto;        // allow ticker to add height
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    // Logo + app name mark (shared by the header and the mobile drawer).
+    &__logo-mark {
+        display: flex;
+        flex-direction: column;   // stack logo-row + ticker vertically
+        align-items: flex-start;
+        min-width: 0;
+        gap: 2px;
+    }
+
+    // Inner row: image/badge + text side by side
+    &__logo-mark-inner {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    &__logo-img {
+        width: auto;
+        max-width: 160px;
+        object-fit: contain;
+    }
+
+    // Letter-badge fallback shown when no logo file/data URL is available.
+    &__logo-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        border-radius: 0.8rem;
+        background: color-mix(in srgb, var(--brand-primary, var(--text-general)) 10%, transparent);
+        color: var(--brand-primary, var(--text-general));
+        font-weight: 700;
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+    &__logo-text {
+        margin-left: 1.2rem;
+        color: var(--text-general);
+        font-weight: 600;
+        font-size: 1.8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+    }
+
+    // On mobile the mark sits next to the hamburger and the account section, so
+    // tighten the padding and show the logo only — the app name is desktop-only
+    // here to avoid crowding. (The mobile drawer header still shows the name.)
+    &--mobile {
+        .app-header__logo {
+            padding-inline-start: 0.8rem;
+            padding-inline-end: 0.8rem;
+        }
+
+        .app-header__logo-text {
+            display: none;
+        }
+    }
+}
+
+// The same mark inside the mobile drawer header shows the app name (the header's
+// --mobile rule hides it, but the drawer has room) and can use the full available width.
+.mobile-menu__header .app-header__logo-text {
+    display: block;
+    max-width: 180px;
+}
+
+/* ─── Logo text animation classes ────────────────────────────────────────────── */
+
+.app-header__logo-text {
+    /* --- pulse: brightness breathing ---------------------------------------- */
+    &--pulse {
+        animation: logo-pulse 2s ease-in-out infinite;
+    }
+
+    /* --- glow: color glow surge --------------------------------------------- */
+    &--glow {
+        animation: logo-glow 2.5s ease-in-out infinite;
+    }
+
+    /* --- rainbow: hue-shift cycle ------------------------------------------- */
+    &--rainbow {
+        background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #21cde4, #a855f7, #ff6b6b);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: logo-rainbow 3s linear infinite;
+    }
+
+    /* --- neon: electric flicker --------------------------------------------- */
+    &--neon {
+        color: #21cde4;
+        animation: logo-neon 3s steps(1) infinite;
+        text-shadow:
+            0 0 5px #21cde4,
+            0 0 10px #21cde4,
+            0 0 20px #21cde4;
+    }
+
+    /* --- shimmer: diagonal sweep -------------------------------------------- */
+    &--shimmer {
+        background: linear-gradient(
+            90deg,
+            var(--text-general) 0%,
+            rgba(255,255,255,0.95) 40%,
+            var(--text-general) 80%
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: logo-shimmer 2s linear infinite;
+    }
+
+    /* --- glitch: RGB-split burst -------------------------------------------- */
+    &--glitch {
+        position: relative;
+        &::before,
+        &::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        &::before {
+            color: #ff2d55;
+            animation: logo-glitch-r 4s steps(1) infinite;
+        }
+        &::after {
+            color: #00ffff;
+            animation: logo-glitch-b 4.2s steps(1) infinite;
+        }
+    }
+}
+
+/* --- wave: per-character bounce ----------------------------------------- */
+.logo-wave-char {
+    display: inline-block;
+    animation: logo-wave-char 1.2s ease-in-out infinite both;
+}
+
+/* ─── Header ticker ──────────────────────────────────────────────────────────── */
+.header-ticker {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.0rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    transition: color 0.25s;
+
+    &__sym {
+        font-size: 0.85rem;
+        opacity: 0.55;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 80px;
+    }
+
+    &__price {
+        letter-spacing: 0.03em;
+        font-size: 1.0rem;
+    }
+
+    &__arrow {
+        font-size: 0.75rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    &--up    { color: #10b981; border-color: rgba(16,185,129,0.2); }
+    &--down  { color: #ef4444; border-color: rgba(239,68,68,0.2); }
+    &--flat  { color: rgba(255,255,255,0.5); }
+
+    /* Flash the price on update */
+    &--up &__price    { animation: ticker-flash-up   0.35s ease; }
+    &--down &__price  { animation: ticker-flash-down 0.35s ease; }
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+@keyframes logo-pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+}
+
+@keyframes logo-glow {
+    0%,100% { text-shadow: 0 0 4px var(--admin-color-primary, #21cde4); color: var(--text-general); }
+    50%      {
+        color: var(--admin-color-primary, #21cde4);
+        text-shadow:
+            0 0 8px  var(--admin-color-primary, #21cde4),
+            0 0 20px var(--admin-color-primary, #21cde4),
+            0 0 40px var(--admin-color-primary, #21cde4);
+    }
+}
+
+@keyframes logo-rainbow {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+@keyframes logo-neon {
+    0%,95%,100% {
+        text-shadow: 0 0 5px #21cde4, 0 0 10px #21cde4, 0 0 20px #21cde4;
+        opacity: 1;
+    }
+    96% { text-shadow: none; opacity: 0.2; }
+    97% { text-shadow: 0 0 5px #21cde4, 0 0 10px #21cde4; opacity: 0.8; }
+    98% { text-shadow: none; opacity: 0.3; }
+    99% { text-shadow: 0 0 5px #21cde4, 0 0 20px #21cde4; opacity: 1; }
+}
+
+@keyframes logo-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes logo-glitch-r {
+    0%,90%,100% { transform: none; clip-path: none; opacity: 0; }
+    91%  { transform: translate(-3px, 0); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); opacity: 0.8; }
+    93%  { transform: translate(3px, 0);  clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); opacity: 0.8; }
+    95%  { transform: none; clip-path: none; opacity: 0; }
+}
+
+@keyframes logo-glitch-b {
+    0%,88%,100% { transform: none; clip-path: none; opacity: 0; }
+    89%  { transform: translate(3px, 0);  clip-path: polygon(0 30%, 100% 30%, 100% 55%, 0 55%); opacity: 0.7; }
+    91%  { transform: translate(-3px, 0); clip-path: polygon(0 5%,  100% 5%,  100% 20%, 0 20%); opacity: 0.7; }
+    93%  { transform: none; clip-path: none; opacity: 0; }
+}
+
+@keyframes logo-wave-char {
+    0%,60%,100% { transform: translateY(0); }
+    30%          { transform: translateY(-5px); }
+}
+
+@keyframes ticker-flash-up {
+    0%  { background: rgba(16,185,129,0.25); }
+    100%{ background: transparent; }
+}
+
+@keyframes ticker-flash-down {
+    0%  { background: rgba(239,68,68,0.25); }
+    100%{ background: transparent; }
+}

@@ -1,0 +1,140 @@
+// Presets intentionally style the existing platform surfaces rather than
+// creating a second dashboard. This keeps every current tab and control usable.
+[data-admin-theme] {
+    --theme-transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease;
+
+    body,
+    .app-root,
+    .dc-app {
+        background: var(--general-main-1) !important;
+        color: var(--text-general);
+        transition: var(--theme-transition);
+    }
+
+    .dashboard,
+    .dashboard__content,
+    .main,
+    .main__content,
+    .analysis-page,
+    .analysis-page__native-area,
+    .bot-builder,
+    .dc-page-overlay {
+        background-color: var(--general-main-1);
+        color: var(--text-general);
+        transition: var(--theme-transition);
+    }
+
+    .dashboard__header,
+    .dashboard__sidebar,
+    .dashboard__content-wrapper,
+    .bot-list,
+    .bot-list__item,
+    .bot-card,
+    .analysis-page__tool,
+    .analysis-page__native-area > *,
+    .dc-card,
+    .dc-modal,
+    .dc-dialog {
+        border-color: var(--border-normal) !important;
+        background-color: var(--general-main-2);
+        color: var(--text-general);
+        transition: var(--theme-transition);
+    }
+
+    button,
+    [role='button'],
+    .dc-btn,
+    .dc-tabs__tab {
+        transition: var(--theme-transition), transform .15s ease, opacity .15s ease;
+    }
+
+    // Scrollable tab rows should end cleanly at the viewport edge. Some
+    // platform surfaces add masks/shadows around overflow containers; disable
+    // them for the app's tab rows so clipped labels remain visually clear.
+    .dc-tabs__list,
+    .dc-themed-scrollbars-wrapper,
+    .analysis-page__tool-list,
+    .da__tabs {
+        box-shadow: none !important;
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+    }
+
+    .dc-tabs__list {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .dc-tabs__tab--active,
+    .dc-tabs__tab[aria-selected='true'],
+    .dashboard__tab--active,
+    .analysis-tools__button--active,
+    .analysis-page__tool--active {
+        color: var(--admin-color-active-tab) !important;
+        border-color: var(--admin-color-active-tab) !important;
+        background: var(--admin-color-active-tab-bg) !important;
+        box-shadow: 0 0 18px color-mix(in srgb, var(--admin-color-active-tab) 18%, transparent);
+    }
+
+    .dc-tabs__tab:not(.dc-tabs__tab--active),
+    .dashboard__tab:not(.dashboard__tab--active),
+    .analysis-tools__button:not(.analysis-tools__button--active) {
+        color: var(--admin-color-inactive-tab);
+    }
+
+    .dc-btn--primary,
+    .admin-btn--primary,
+    .dashboard__button--primary,
+    .analysis-tools__button--active {
+        background: var(--admin-color-primary) !important;
+        color: var(--general-main-1) !important;
+    }
+
+    input,
+    textarea,
+    select {
+        background-color: var(--general-main-2);
+        border-color: var(--border-normal);
+        color: var(--text-general);
+    }
+
+    [class*='card'],
+    [class*='panel'],
+    [class*='tile'] {
+        border-color: var(--border-normal);
+    }
+
+    .landing {
+        --landing-accent: var(--admin-color-primary);
+        --bg-deep: var(--general-main-1);
+        --bg-card: color-mix(in srgb, var(--general-main-2) 88%, transparent);
+        --bg-card-hover: color-mix(in srgb, var(--general-section-2) 92%, transparent);
+        --border: var(--border-normal);
+        --text-primary: var(--text-general);
+        --text-secondary: var(--text-less-prominent);
+        --text-muted: var(--text-less-prominent);
+        background-color: var(--general-main-1) !important;
+        color: var(--text-general) !important;
+    }
+}
+
+[data-admin-theme='dbot-neon'] {
+    --theme-glow: rgba(33, 205, 228, .25);
+}
+
+[data-admin-theme='empire-gold'] {
+    --theme-glow: rgba(229, 184, 75, .25);
+}
+
+[data-admin-theme='money-ai'] {
+    --theme-glow: rgba(139, 124, 255, .3);
+}
+
+[data-admin-theme='midnight-terminal'] {
+    --theme-glow: rgba(163, 230, 53, .25);
+}

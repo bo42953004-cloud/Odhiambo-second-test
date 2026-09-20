@@ -1,0 +1,182 @@
+.free-bots-page {
+    padding: 2.4rem;
+    min-height: 100%;
+    overflow-y: auto;
+
+    &__header {
+        margin-bottom: 24px;
+    }
+
+    &__title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-prominent);
+        margin: 0 0 6px;
+    }
+
+    &__subtitle {
+        font-size: 1.3rem;
+        color: var(--text-general);
+        margin: 0;
+        opacity: 0.7;
+    }
+
+    &__controls {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    &__search {
+        width: 100%;
+        max-width: 360px;
+        background: var(--general-section-1);
+        border: 1.5px solid var(--border-normal, #334155);
+        border-radius: 8px;
+        color: var(--text-prominent);
+        font-size: 1.3rem;
+        padding: 9px 14px;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+
+        &:focus { border-color: var(--admin-color-primary, #21cde4); }
+        &::placeholder { color: var(--text-general); opacity: 0.4; }
+    }
+
+    &__categories {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    &__cat-btn {
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border-normal, #334155);
+        background: transparent;
+        color: var(--text-general);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            border-color: var(--admin-color-primary, #21cde4);
+            color: var(--admin-color-primary, #21cde4);
+        }
+
+        &--active {
+            background: var(--admin-color-primary, #21cde4);
+            border-color: var(--admin-color-primary, #21cde4);
+            color: #0f172a;
+            font-weight: 700;
+        }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    &__empty {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--text-general);
+        opacity: 0.5;
+
+        span { font-size: 48px; display: block; margin-bottom: 12px; }
+        p { font-size: 1.4rem; }
+    }
+}
+
+// ─── Bot Card ─────────────────────────────────────────────────────────────────
+
+.bot-card {
+    background: var(--general-main-1);
+    border: 1px solid var(--border-normal, #2a3441);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+        border-color: var(--bot-color, #21cde4);
+    }
+
+    &__accent {
+        height: 4px;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    &__icon {
+        font-size: 28px;
+        padding: 16px 16px 8px;
+    }
+
+    &__content {
+        padding: 0 16px 10px;
+        flex: 1;
+    }
+
+    &__name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-prominent);
+        margin: 0 0 6px;
+    }
+
+    &__desc {
+        font-size: 1.2rem;
+        color: var(--text-general);
+        line-height: 1.5;
+        margin: 0;
+        opacity: 0.75;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px 12px;
+        gap: 8px;
+    }
+
+    &__category {
+        font-size: 1.1rem;
+        color: var(--text-general);
+        background: var(--general-section-1);
+        padding: 3px 8px;
+        border-radius: 20px;
+        opacity: 0.8;
+    }
+
+    &__risk {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    &__cta {
+        margin: 0 16px 14px;
+        padding: 10px;
+        border-radius: 8px;
+        background: var(--bot-color, #21cde4);
+        color: #0f172a;
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-align: center;
+        transition: opacity 0.2s, transform 0.1s;
+
+        .bot-card:hover & {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+    }
+}
