@@ -1,0 +1,3144 @@
+@import "tailwindcss";
+
+:root {
+  /* ---- DigitTools palette (from screenshot) ---- */
+  --app: #040a1e;
+  --app-2: #020716;
+  --nav: #070e2e;
+  --nav-2: #040a24;
+  --panel: #0a1338;
+  --panel-2: #070f2c;
+  --panel-lift: #16204a;
+  --line: rgba(96, 142, 255, 0.16);
+  --line-2: rgba(96, 142, 255, 0.28);
+
+  --txt: #ffffff;
+  --muted: #8ea0c9;
+  --faint: #5c6f9c;
+
+  --blue: #2f7bff;
+  --cyan: #29d3f5;
+  --gold: #f5b731;
+  --purple: #8b5cf6;
+  --pink: #c026d3;
+  --green: #12c9a0;
+  --red: #ef3b4a;
+  --yellow: #ffd400;
+
+  --r-lg: 18px;
+  --r-md: 14px;
+  --r-sm: 10px;
+
+  /* ---- surface tokens: every plate reads from these, so light mode
+         flips the whole UI rather than just the chrome ---- */
+  --s1: #0a1338; /* plate top */
+  --s2: #050b22; /* plate bottom */
+  --s3: #070f2e; /* deep canvas */
+  --scrim: rgba(6, 12, 34, 0.92);
+  --chip: rgba(255, 255, 255, 0.06);
+  --chip-line: rgba(255, 255, 255, 0.1);
+  --soft: rgba(255, 255, 255, 0.045);
+}
+
+html[data-theme="light"] {
+  --s1: #ffffff;
+  --s2: #f2f6fd;
+  --s3: #e9eff9;
+  --scrim: rgba(255, 255, 255, 0.94);
+  --chip: rgba(15, 23, 42, 0.05);
+  --chip-line: rgba(15, 23, 42, 0.1);
+  --soft: rgba(15, 23, 42, 0.035);
+
+  /* accents are darkened so figures, bars and labels stay legible on white
+     (the bright neon set is tuned for dark plates) */
+  --cyan: #0891b2;
+  --green: #0f9d80;
+  --gold: #b45309;
+  --red: #dc2626;
+  --purple: #7c3aed;
+  --blue: #1d4ed8;
+  --yellow: #b45309;
+  --up: #0f9d80;
+  --violet: #7c3aed;
+  --pink: #be185d;
+  --faint: #7b8aa6;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--app-2);
+  color: var(--txt);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* `clip` instead of `hidden`: hidden creates a scroll container on body,
+     which silently breaks position: sticky for the Signal AI tools island */
+  overflow-x: clip;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--app-2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(96, 142, 255, 0.28);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 142, 255, 0.5);
+}
+
+/* ============ Keyframes ============ */
+@keyframes dt-x-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes dt-x-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes dt-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dt-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+  65% {
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dt-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+}
+@keyframes dt-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes dt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes dt-sheen {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+@keyframes dt-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(18, 201, 160, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(18, 201, 160, 0);
+  }
+}
+@keyframes dt-dash {
+  from {
+    stroke-dashoffset: 320;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes dt-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes dt-caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes dt-reveal {
+  from {
+    letter-spacing: 1.2em;
+    opacity: 0;
+  }
+  to {
+    letter-spacing: 0.32em;
+    opacity: 1;
+  }
+}
+@keyframes dt-stripe {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
+}
+@keyframes dt-tick {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dt-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============ Utilities ============ */
+.A-up {
+  animation: dt-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.A-fade {
+  animation: dt-fade 0.6s ease both;
+}
+.A-pop {
+  animation: dt-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.A-drop {
+  animation: dt-drop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.A-float {
+  animation: dt-float 6s ease-in-out infinite;
+}
+.A-glow {
+  animation: dt-glow 3.6s ease-in-out infinite;
+}
+.A-spin {
+  animation: dt-spin 18s linear infinite;
+}
+.A-spin-r {
+  animation: dt-spin 26s linear infinite reverse;
+}
+.A-ring {
+  animation: dt-ring 2.2s ease-out infinite;
+}
+.A-blink {
+  animation: dt-blink 1.8s ease-in-out infinite;
+}
+.A-caret {
+  animation: dt-caret 1s step-end infinite;
+}
+.A-tick {
+  animation: dt-tick 0.35s ease both;
+}
+
+/* Card with glowing neon border */
+.dt-card {
+  position: relative;
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--s1) 0%, var(--s2) 100%);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 var(--chip-line),
+    0 26px 60px -32px rgba(0, 0, 0, 0.75);
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s,
+    border-color 0.45s;
+}
+.dt-card:hover {
+  transform: translateY(-6px);
+}
+
+.dt-panel {
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--s1) 0%, var(--s2) 100%);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--chip-line);
+}
+
+.dt-sheen::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+.dt-sheen:hover::after {
+  opacity: 1;
+  animation: dt-sheen 0.9s ease;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.reveal {
+  animation: dt-reveal 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dt-blend {
+  mix-blend-mode: screen;
+}
+
+/* ================================================================
+   THEME TOKENS  —  dark (default) + light
+   Light mode flips the page chrome, background and typography to a
+   light slate palette while the data plates stay dark so charts,
+   neon indicators and the robot renders keep their contrast.
+   ================================================================ */
+:root {
+  --text: var(--txt); /* alias — some components reference --text */
+  --amb-grid: rgba(96, 142, 255, 0.07);
+  --amb-glyph: rgba(180, 205, 255, 0.5);
+  --amb-line: rgba(96, 142, 255, 0.1);
+  --plate-txt: #eaf0ff; /* text inside data plates — stays light in both themes */
+
+  /* top-bar chrome follows the theme (dark by default) */
+  --bar-bg: #060d24;
+  --bar-fg: #e8efff;
+  --bar-sub: #93a6c9;
+  --bar-line: rgba(96, 142, 255, 0.18);
+  --bar-chip: rgba(255, 255, 255, 0.06);
+  --ticker-bg: #040a1e;
+  --ticker-txt: #8ea0c9;
+  --chrome-bg: #040a1e;
+}
+
+html[data-theme="light"] {
+  --app: #eef2f9;
+  --app-2: #e7ecf6;
+  --nav: #ffffff;
+  --nav-2: #f2f5fb;
+  --line: rgba(15, 23, 42, 0.12);
+  --line-2: rgba(15, 23, 42, 0.2);
+  --txt: #0b1428;
+  --muted: #4d5d7d;
+  --faint: #7b8aa6;
+
+  --bar-bg: #ffffff;
+  --bar-fg: #0b1330;
+  --bar-sub: #5c6f9c;
+  --bar-line: rgba(15, 23, 42, 0.12);
+  --bar-chip: rgba(15, 23, 42, 0.05);
+  --ticker-bg: #ffffff;
+  --ticker-txt: #55658a;
+  --chrome-bg: #ffffff;
+}
+/* the light ticker needs dark ink for its labels */
+html[data-theme="light"] .ticker-up {
+  color: #04765f !important;
+}
+html[data-theme="light"] .ticker-down {
+  color: #c62a3c !important;
+}
+html[data-theme="light"] .ticker-label-up {
+  color: #1d4ed8 !important;
+}
+html[data-theme="light"] .ticker-label-down {
+  color: #b32331 !important;
+}
+
+/* Plates now follow the theme. Backgrounds come from the surface tokens and the
+   text tokens are inherited from :root, so light mode gets white plates with
+   ink text and dark mode keeps the navy plates with light text — automatically. */
+.dt-panel,
+.dt-card,
+.dt-dark-scope {
+  color: var(--txt);
+}
+
+/* the old hard-coded plate styling is replaced by the token version above */
+.panel {
+  background: linear-gradient(160deg, var(--s1), var(--s2));
+}
+
+/* ==================================================================
+   LIGHT-MODE NORMALISER
+   Many components still carry inline dark literals authored for the
+   navy plate. Instead of touching ~75 call-sites, these rules remap the
+   exact literals to theme tokens while the light theme is active.
+   Attribute selectors match the inline style string; !important is
+   required because inline styles otherwise take precedence.
+   ================================================================== */
+
+/* --- light-on-dark text → ink --- */
+html[data-theme="light"] [style*="#cfdcff"],
+html[data-theme="light"] [style*="#dbe7ff"],
+html[data-theme="light"] [style*="#e6eeff"],
+html[data-theme="light"] [style*="#eaf0ff"],
+html[data-theme="light"] [style*="#a9bce0"],
+html[data-theme="light"] [style*="#cfe0ff"],
+html[data-theme="light"] [style*="#bcd2ff"],
+html[data-theme="light"] [style*="#c9b1ff"] {
+  color: var(--txt) !important;
+}
+
+/* --- faint white washes → theme chip --- */
+html[data-theme="light"] [style*="rgba(255,255,255,.025)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.03)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.035)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.04)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.045)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.05)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.06)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.07)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.08)"],
+html[data-theme="light"] [style*="rgba(255,255,255,.09)"],
+html[data-theme="light"] [style*="rgba(255, 255, 255, 0.05)"],
+html[data-theme="light"] [style*="rgba(255, 255, 255, 0.06)"] {
+  background: var(--chip) !important;
+}
+
+/* --- navy plate gradients → light plates --- */
+html[data-theme="light"] [style*="linear-gradient(180deg,#0a1338"],
+html[data-theme="light"] [style*="linear-gradient(180deg, #0a1338"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#0c1638"],
+html[data-theme="light"] [style*="linear-gradient(180deg, #0c1638"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#0d1740"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#081130"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#0a1233"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#060c22"],
+html[data-theme="light"] [style*="linear-gradient(180deg,#111a2e"],
+html[data-theme="light"] [style*="linear-gradient(145deg,#16224d"] {
+  background: linear-gradient(180deg, var(--s1) 0%, var(--s2) 100%) !important;
+}
+
+/* --- flat dark fills used for chips/badges --- */
+html[data-theme="light"] [style*="background: #0a1338"],
+html[data-theme="light"] [style*="background: #0a1130"],
+html[data-theme="light"] [style*="background: #0a1128"] {
+  background: var(--s1) !important;
+}
+
+/* --- the hot-markets panel keeps its warm identity, just lighter --- */
+html[data-theme="light"] [style*="linear-gradient(180deg,#160f28"] {
+  background: linear-gradient(180deg, #fff8f1 0%, #fdeee0 100%) !important;
+}
+html[data-theme="light"] [style*="linear-gradient(155deg, rgba(24,20,44"] {
+  background: linear-gradient(155deg, #ffffff 0%, #fff7f0 60%) !important;
+}
+html[data-theme="light"] [style*="linear-gradient(155deg, rgba(24, 20, 44"] {
+  background: linear-gradient(155deg, #ffffff 0%, #fff7f0 60%) !important;
+}
+
+/* --- lighten the dark scrims that sit over imagery --- */
+html[data-theme="light"] [style*="linear-gradient(180deg, transparent, color-mix(in srgb, #060c22"] {
+  background: linear-gradient(180deg, transparent, var(--scrim) 60%) !important;
+}
+
+/* --- rail / builders keep their own tokens but must not inherit dark bg --- */
+html[data-theme="light"] .bd-canvas {
+  background: var(--s3);
+  background-image: radial-gradient(var(--chip-line) 1px, transparent 1px);
+}
+html[data-theme="light"] .bd-block-h {
+  background: #cfdcf6;
+  color: #10264d;
+}
+html[data-theme="light"] .bd-block-b {
+  background: #eaf1fd;
+  color: #1b2a45;
+}
+html[data-theme="light"] .arr-row {
+  background: var(--chip);
+}
+html[data-theme="light"] .arr-mv {
+  background: var(--chip);
+  color: var(--muted);
+}
+html[data-theme="light"] .lp-btn-ghost {
+  background: var(--chip);
+}
+
+/* ---------- light overrides for chrome surfaces ---------- */
+html[data-theme="light"] .dt-rail {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f4fa 100%);
+  border-bottom: 1px solid var(--line);
+}
+html[data-theme="light"] .tab {
+  color: #64748b;
+}
+html[data-theme="light"] .tab:hover {
+  color: #0b1428;
+}
+/* light theme: keep the label crisp on the coloured pill, but the accent
+   still drives the halo, trim, dot and icon tile */
+html[data-theme="light"] .tab[data-active="true"] .ico {
+  box-shadow:
+    0 0 0 1.5px currentColor,
+    0 0 16px -5px currentColor,
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+html[data-theme="light"] .tab:not([data-active="true"]) .ico {
+  color: var(--tab-accent, #29d3f5) !important;
+  filter: brightness(0.72) saturate(1.25);
+}
+html[data-theme="light"] .dt-beacon {
+  background: linear-gradient(90deg, transparent, rgba(30, 90, 200, 0.1), transparent);
+}
+html[data-theme="light"] body {
+  background: var(--app-2);
+}
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #e7ecf6;
+}
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.22);
+}
+html[data-theme="light"] .dt-marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+html[data-theme="light"] .A-spin,
+html[data-theme="light"] .A-spin-r {
+  opacity: 0.9;
+}
+
+html[data-theme="light"] {
+  --amb-grid: rgba(15, 23, 42, 0.07);
+  --amb-glyph: rgba(30, 55, 120, 0.42);
+  --amb-line: rgba(15, 23, 42, 0.1);
+}
+
+/* ================================================================
+   BOTS BACKDROP  —  explicit themed background + raining log columns
+   ================================================================ */
+:root {
+  --bots-bg: linear-gradient(180deg, #050d24 0%, #03081a 45%, #01040f 100%);
+  --bots-ink: rgba(120, 170, 255, 0.5);
+  --bots-ink-2: rgba(180, 205, 255, 0.34);
+  --bots-green: rgba(18, 201, 160, 0.55);
+  --bots-red: rgba(255, 77, 103, 0.5);
+  --bots-veil: radial-gradient(120% 80% at 50% 0%, rgba(5, 13, 36, 0) 25%, rgba(1, 4, 15, 0.82) 100%);
+}
+html[data-theme="light"] {
+  --bots-bg: linear-gradient(180deg, #e9eef8 0%, #e2e9f5 50%, #dde5f3 100%);
+  --bots-ink: rgba(37, 74, 160, 0.42);
+  --bots-ink-2: rgba(37, 74, 160, 0.26);
+  --bots-green: rgba(6, 128, 104, 0.45);
+  --bots-red: rgba(198, 42, 60, 0.4);
+  --bots-veil: radial-gradient(120% 80% at 50% 0%, rgba(233, 238, 248, 0) 25%, rgba(214, 223, 240, 0.7) 100%);
+}
+
+.bots-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bots-bg);
+}
+.bots-cols {
+  position: absolute;
+  inset: 0;
+}
+.bots-col {
+  position: absolute;
+  top: 0;
+  height: 200%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  white-space: nowrap;
+  font-family: ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  animation: dt-fall linear infinite;
+  will-change: transform;
+}
+.bots-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--bots-veil);
+}
+.bots-horizon {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, var(--bots-ink-2));
+  opacity: 0.35;
+}
+
+@keyframes dt-fall {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ================================================================
+   AMBIENCE  —  living background for the bots area
+   ================================================================ */
+.amb {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.amb-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--amb-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--amb-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(120% 80% at 50% 30%, #000 15%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 80% at 50% 30%, #000 15%, transparent 78%);
+}
+.amb-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--amb-grid) 1.4px, transparent 1.4px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(90% 70% at 50% 50%, #000, transparent 80%);
+  -webkit-mask-image: radial-gradient(90% 70% at 50% 50%, #000, transparent 80%);
+}
+.amb-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  animation: dt-drift 22s ease-in-out infinite;
+  will-change: transform;
+}
+.amb-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed var(--amb-line);
+  animation: dt-spin 60s linear infinite;
+}
+.amb-ring::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  border: 1px solid var(--amb-line);
+}
+.amb-sweep {
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  width: 34%;
+  opacity: 0.5;
+  transform: rotate(-14deg);
+  background: linear-gradient(90deg, transparent, var(--amb-grid), transparent);
+  animation: dt-amb-sweep 13s ease-in-out infinite;
+}
+.amb-glyph {
+  position: absolute;
+  font-family: ui-monospace, monospace;
+  font-weight: 900;
+  color: var(--amb-glyph);
+  opacity: 0;
+  animation: dt-rise linear infinite;
+  user-select: none;
+}
+.amb-scanline {
+  position: absolute;
+  inset-inline: 0;
+  height: 130px;
+  background: linear-gradient(180deg, transparent, var(--amb-grid), transparent);
+  animation: dt-amb-scan 16s linear infinite;
+}
+
+@keyframes dt-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(58px, -38px, 0) scale(1.16);
+  }
+  66% {
+    transform: translate3d(-42px, 26px, 0) scale(0.94);
+  }
+}
+@keyframes dt-amb-sweep {
+  0% {
+    transform: translateX(-120%) rotate(-14deg);
+  }
+  55%,
+  100% {
+    transform: translateX(360%) rotate(-14deg);
+  }
+}
+@keyframes dt-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(-8deg);
+  }
+  12% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-190px) rotate(10deg);
+  }
+}
+@keyframes dt-amb-scan {
+  0% {
+    transform: translateY(-140px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amb-blob,
+  .amb-ring,
+  .amb-sweep,
+  .amb-glyph,
+  .amb-scanline {
+    animation: none !important;
+  }
+}
+
+/* ================================================================
+   3D DEMO MARK  —  glossy, lit capital D
+   ================================================================ */
+.demo-d {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -0.02em;
+  background: linear-gradient(152deg, #9aeeff 0%, #3f8bff 40%, #1d47b8 72%, #102a72 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -4px 9px rgba(0, 18, 60, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+    0 7px 18px -5px rgba(41, 211, 245, 0.95),
+    0 0 24px rgba(41, 211, 245, 0.45);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 6px rgba(0, 20, 60, 0.75);
+  overflow: hidden;
+  animation: dt-dpulse 2.8s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(0.34, 1.42, 0.5, 1);
+}
+.demo-d:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+/* glossy top cap */
+.demo-d::after {
+  content: "";
+  position: absolute;
+  inset: 1px 1px 52% 1px;
+  border-radius: inherit;
+  border-bottom-left-radius: 46%;
+  border-bottom-right-radius: 46%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.06));
+  pointer-events: none;
+}
+/* travelling sheen */
+.demo-d::before {
+  content: "";
+  position: absolute;
+  top: -70%;
+  bottom: -70%;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  transform: translateX(-160%) rotate(18deg);
+  animation: dt-dshine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes dt-dshine {
+  0% {
+    transform: translateX(-160%) rotate(18deg);
+  }
+  55%,
+  100% {
+    transform: translateX(330%) rotate(18deg);
+  }
+}
+@keyframes dt-dpulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -4px 9px rgba(0, 18, 60, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+      0 7px 18px -5px rgba(41, 211, 245, 0.95),
+      0 0 24px rgba(41, 211, 245, 0.45);
+  }
+  50% {
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -4px 9px rgba(0, 18, 60, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+      0 9px 24px -5px rgba(41, 211, 245, 1),
+      0 0 38px rgba(41, 211, 245, 0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-d,
+  .demo-d::before {
+    animation: none !important;
+  }
+}
+
+/* ================================================================
+   3D US FLAG TILE  —  same polish family as the demo D
+   ================================================================ */
+.flag-3d {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  overflow: hidden;
+  /* curved outward: strong left/right edge shading + bottom falloff = a bulging surface */
+  box-shadow:
+    inset 3px 0 6px -2px rgba(0, 10, 40, 0.55),
+    inset -3px 0 6px -2px rgba(0, 10, 40, 0.55),
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -6px 12px -4px rgba(0, 15, 45, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 8px 18px -6px rgba(56, 118, 255, 0.9),
+    0 0 22px rgba(56, 118, 255, 0.4);
+  animation: dt-flagpulse 3.2s ease-in-out infinite;
+  transition: transform 0.35s cubic-bezier(0.34, 1.42, 0.5, 1), box-shadow 0.35s;
+}
+.flag-3d:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+/* the wrap gives the flag a subtle outward barrel */
+.flag-3d > span:first-child {
+  display: block;
+  transform: perspective(60px) rotateY(0deg);
+}
+/* convex specular sweep + horizontal gloss band */
+.flag-3d::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* kept light — heavy gloss previously washed the stripes out entirely */
+  background:
+    radial-gradient(70% 44% at 20% 8%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 64%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(120% 90% at 50% 112%, rgba(0, 12, 45, 0.34), rgba(0, 12, 45, 0) 62%);
+}
+/* travelling sheen */
+.flag-3d::before {
+  content: "";
+  position: absolute;
+  top: -70%;
+  bottom: -70%;
+  width: 42%;
+  z-index: 2;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  transform: translateX(-160%) rotate(18deg);
+  animation: dt-dshine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.flag-3d > span {
+  position: relative;
+  z-index: 1;
+}
+@keyframes dt-flagpulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -3px 7px rgba(0, 15, 45, 0.42),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.26),
+      0 7px 16px -5px rgba(56, 118, 255, 0.85),
+      0 0 20px rgba(56, 118, 255, 0.35);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -3px 7px rgba(0, 15, 45, 0.42),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+      0 9px 22px -5px rgba(56, 118, 255, 0.95),
+      0 0 34px rgba(56, 118, 255, 0.6);
+  }
+}
+
+/* ================================================================
+   ARRANGE TABS  —  the sign, list rows and footer
+   ================================================================ */
+.arr-sign {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+  padding: 9px 11px;
+  border-radius: 13px;
+  border: 1px solid rgba(245, 183, 49, 0.45);
+  background: linear-gradient(150deg, rgba(245, 183, 49, 0.2), rgba(245, 183, 49, 0.06));
+  color: #ffd27a;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34, 1.42, 0.5, 1), border-color 0.3s, box-shadow 0.3s, color 0.3s;
+}
+.arr-sign:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 183, 49, 0.85);
+  color: #fff0cf;
+  box-shadow: 0 10px 22px -10px rgba(245, 183, 49, 0.9), 0 0 22px rgba(245, 183, 49, 0.25);
+}
+.arr-sign::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-160%) rotate(16deg);
+  animation: dt-dshine 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.arr-sign svg {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 720px) {
+  .arr-sign span {
+    display: none;
+  }
+}
+.arr-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  transition: transform 0.3s, border-color 0.3s, background 0.3s;
+}
+.arr-row:hover {
+  transform: translateX(3px);
+  border-color: var(--line-2);
+  background: rgba(255, 255, 255, 0.06);
+}
+.arr-mv {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.25s, color 0.25s, border-color 0.25s, background 0.25s;
+}
+.arr-mv:hover:not(:disabled) {
+  transform: translateY(-2px);
+  color: #fff;
+  border-color: rgba(41, 211, 245, 0.6);
+  background: rgba(41, 211, 245, 0.14);
+}
+.arr-mv:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+.arr-mv svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ================================================================
+   HOT SIGN  —  the fire marker after the last tab
+   ================================================================ */
+/* positioning context for the pinned sink */
+.dt-rail-wrap {
+  position: relative;
+}
+
+/* the tabs slide UNDER this fixed sink — the sign itself never moves */
+.rail-sink {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  padding-left: 44px;
+  padding-right: 10px;
+  background: linear-gradient(90deg, transparent 0%, var(--rail-bg) 38%, var(--rail-bg) 100%);
+  pointer-events: none;
+}
+.rail-sink > * {
+  pointer-events: auto;
+}
+/* keep the rail from letting tabs disappear under the sink (wider sign now) */
+.dt-track {
+  padding-right: 146px;
+}
+
+/* ================================================================
+   TOP RUN CONTROL  —  sits in the ticker row, markets scroll behind it
+   ================================================================ */
+.ticker-sink {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding-left: 46px;
+  padding-right: 12px;
+  background: linear-gradient(90deg, transparent 0%, var(--ticker-bg) 48%, var(--ticker-bg) 100%);
+}
+.run-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 20px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(115deg, #0b1a4a, #1a8ee0);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -12px rgba(26, 142, 224, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.28s, filter 0.28s, box-shadow 0.28s, background 0.35s;
+  animation: dt-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.run-top:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+.run-top.on {
+  background: linear-gradient(115deg, #7a1020, #e0413f);
+  box-shadow: 0 10px 24px -12px rgba(224, 65, 63, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  animation: dt-hotpulse 1.9s ease-in-out infinite;
+}
+.run-top i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #7dffd4;
+  box-shadow: 0 0 8px #7dffd4;
+}
+.run-top.on i {
+  background: #ffd8d8;
+  box-shadow: 0 0 8px #ffd8d8;
+  animation: dt-blink 1.2s ease-in-out infinite;
+}
+
+/* strategy input rows */
+.bd-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  border-top: 1px solid var(--bd-line);
+}
+.bd-input > label {
+  flex: 0 0 148px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--bd-sub);
+}
+.bd-input select,
+.bd-input input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--bd-chip-fg) 22%, transparent);
+  border-radius: 8px;
+  background: var(--bd-chip);
+  color: var(--bd-chip-fg);
+  padding: 7px 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  outline: none;
+  transition: box-shadow 0.25s, border-color 0.25s;
+}
+.bd-input select:focus,
+.bd-input input:focus {
+  border-color: rgba(26, 142, 224, 0.8);
+  box-shadow: 0 0 0 3px rgba(26, 142, 224, 0.16);
+}
+.bd-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.bd-step button {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid var(--bd-line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bd-fg) 7%, transparent);
+  color: var(--bd-fg);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.25s, background 0.25s;
+}
+.bd-step button:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--bd-fg) 14%, transparent);
+}
+.bd-step .v {
+  min-width: 74px;
+  text-align: center;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bd-fg);
+}
+
+.hot-sign {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 76px;
+  height: 60px;
+  border-radius: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  overflow: visible;
+  /* intentionally still: only colours and glow animate, never position */
+  transition: border-color 0.45s, background 0.45s, box-shadow 0.45s;
+}
+
+/* the flame cluster fills the tile */
+.hot-glyph {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  width: 60%;
+  height: 60%;
+}
+.hot-glyph .blob {
+  display: block;
+  width: 11px;
+  border-radius: 52% 52% 46% 46% / 62% 62% 40% 40%;
+  background: linear-gradient(180deg, #ffe9a8 0%, #ffb03a 38%, #ff7a1f 70%, #e8551a 100%);
+  transform-origin: 50% 100%;
+  transition: filter 0.45s, opacity 0.45s;
+}
+
+/* ---------- dormant ---------- */
+.hot-sign[data-hot="false"] .hot-glyph {
+  filter: grayscale(1) brightness(0.85);
+  opacity: 0.42;
+}
+.hot-sign[data-hot="false"] .hot-glyph .blob {
+  height: 46% !important;
+  animation: none;
+}
+
+/* ---------- lit ---------- */
+.hot-sign[data-hot="true"] {
+  border-color: rgba(255, 190, 90, 0.95);
+  background:
+    radial-gradient(125% 125% at 50% 112%, rgba(255, 150, 45, 0.55), rgba(255, 95, 25, 0.16) 56%, rgba(26, 11, 5, 0.72) 100%),
+    linear-gradient(180deg, rgba(60, 26, 8, 0.9), rgba(24, 11, 5, 0.95));
+  animation: dt-hotpulse 1.9s ease-in-out infinite;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob {
+  filter: drop-shadow(0 0 6px rgba(255, 150, 60, 0.95)) drop-shadow(0 0 14px rgba(255, 110, 30, 0.6));
+  animation: dt-blob 1.25s ease-in-out infinite;
+}
+/* the flames breathe out of phase so the cluster looks alive */
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(1) {
+  animation-delay: -0.1s;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(2) {
+  animation-delay: -0.55s;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(3) {
+  animation-delay: -0.25s;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(4) {
+  animation-delay: -0.8s;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(5) {
+  animation-delay: -0.4s;
+}
+.hot-sign[data-hot="true"] .hot-glyph .blob:nth-child(6) {
+  animation-delay: -0.95s;
+}
+
+@keyframes dt-blob {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0) scaleX(1);
+  }
+  30% {
+    transform: scaleY(1.14) translateY(-2px) scaleX(0.95);
+  }
+  62% {
+    transform: scaleY(0.93) translateY(1px) scaleX(1.05);
+  }
+  80% {
+    transform: scaleY(1.06) translateY(-1px) scaleX(0.98);
+  }
+}
+@keyframes dt-hotpulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 160, 60, 0.3),
+      0 0 18px rgba(255, 140, 45, 0.55),
+      0 0 40px rgba(255, 130, 40, 0.28),
+      inset 0 0 20px rgba(255, 140, 45, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 190, 90, 0.5),
+      0 0 28px rgba(255, 150, 50, 0.85),
+      0 0 62px rgba(255, 130, 40, 0.45),
+      inset 0 0 30px rgba(255, 150, 50, 0.45);
+  }
+}
+@keyframes dt-hotflicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.82;
+  }
+  75% {
+    opacity: 1;
+  }
+}
+@keyframes dt-hotbadge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+}
+
+/* ---------- the superscript counter (gold-ringed coin) ---------- */
+.hot-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 4;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 7px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-family: ui-monospace, monospace;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  color: #20120a;
+  background: linear-gradient(165deg, #ffd98a 0%, #ffab2e 42%, #ef7d0c 100%);
+  border: 2.5px solid #ffd45e;
+  box-shadow:
+    0 0 14px rgba(255, 175, 60, 0.95),
+    0 8px 16px -8px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  animation: dt-hotbadge 1.7s ease-in-out infinite;
+}
+
+/* scanning ping while dormant */
+.hot-scan {
+  position: absolute;
+  inset: -2px;
+  border-radius: 17px;
+  border: 1.5px solid rgba(255, 150, 60, 0.45);
+  animation: dt-ring 2.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hot-sign,
+  .hot-sign .hot-glyph .blob,
+  .hot-badge,
+  .hot-scan {
+    animation: none !important;
+  }
+}
+
+/* ================================================================
+   DBOT-STYLE BOT BUILDER  —  works in dark and light
+   ================================================================ */
+:root {
+  --bd-canvas: #070f2e;
+  --bd-panel: #0b1433;
+  --bd-line: rgba(96, 142, 255, 0.2);
+  --bd-fg: #eaf0ff;
+  --bd-sub: #93a6c9;
+  --bd-blue: #0d2464;
+  --bd-blue-d: #071a4d;
+  --bd-blue-fg: #e8efff;
+  --bd-grad: linear-gradient(115deg, #0a1c52 0%, #1a8ee0 100%);
+  --bd-chip: #ffffff;
+  --bd-chip-fg: #16233f;
+  --rail-bg: #08102f;
+}
+html[data-theme="light"] {
+  --bd-canvas: #eef2f8;
+  --bd-panel: #ffffff;
+  --bd-line: rgba(15, 23, 42, 0.14);
+  --bd-fg: #0b1428;
+  --bd-sub: #5a6a86;
+  --bd-blue: #e4ecfb;
+  --bd-blue-d: #cfdcf6;
+  --bd-blue-fg: #10264d;
+  --bd-grad: linear-gradient(115deg, #0b1a4a 0%, #1a8ee0 100%);
+  --bd-chip: #ffffff;
+  --bd-chip-fg: #16233f;
+  --rail-bg: #f7f9fd;
+}
+
+.bd-wrap {
+  display: grid;
+  grid-template-columns: 262px minmax(0, 1fr) 306px;
+  gap: 10px;
+  align-items: start;
+}
+@media (max-width: 1280px) {
+  .bd-wrap {
+    grid-template-columns: 246px minmax(0, 1fr);
+  }
+  .bd-right {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 900px) {
+  .bd-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bd-right {
+    grid-column: auto;
+  }
+}
+
+.bd-panel {
+  background: var(--bd-panel);
+  border: 1px solid var(--bd-line);
+  border-radius: 14px;
+  color: var(--bd-fg);
+  overflow: hidden;
+}
+.bd-grad {
+  background: var(--bd-grad);
+  color: #fff;
+}
+.bd-sub {
+  color: var(--bd-sub);
+}
+
+/* left: quick strategy + blocks menu */
+.bd-qstrat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.bd-menuhead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid var(--bd-line);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.bd-menuhead:hover {
+  background: color-mix(in srgb, var(--bd-fg) 5%, transparent);
+}
+.bd-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px;
+  padding: 9px 11px;
+  border: 1px solid var(--bd-line);
+  border-radius: 10px;
+}
+.bd-search input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  color: var(--bd-fg);
+}
+.bd-search input::placeholder {
+  color: var(--bd-sub);
+}
+.bd-cat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 0;
+  border-top: 1px solid var(--bd-line);
+  background: transparent;
+  color: var(--bd-fg);
+  font-size: 14.5px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.25s, padding-left 0.25s;
+}
+.bd-cat:hover {
+  background: color-mix(in srgb, var(--bd-fg) 6%, transparent);
+  padding-left: 18px;
+}
+.bd-cat svg {
+  margin-left: auto;
+  width: 15px;
+  height: 15px;
+  transition: transform 0.35s;
+}
+
+/* middle: toolbar + canvas */
+.bd-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  background: var(--bd-panel);
+  border: 1px solid var(--bd-line);
+  border-radius: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bd-toolbar::-webkit-scrollbar {
+  display: none;
+}
+.bd-tool {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--bd-sub);
+  cursor: pointer;
+  transition: transform 0.25s, color 0.25s, background 0.25s;
+}
+.bd-tool:hover {
+  transform: translateY(-2px);
+  color: var(--bd-fg);
+  background: color-mix(in srgb, var(--bd-fg) 8%, transparent);
+}
+.bd-tool svg {
+  width: 18px;
+  height: 18px;
+}
+.bd-sep {
+  width: 1px;
+  height: 22px;
+  margin: 0 6px;
+  background: var(--bd-line);
+  flex: 0 0 auto;
+}
+/* the visual block builder is disabled — the row panel above replaces it */
+.bd-hidden {
+  display: none !important;
+}
+
+/* the workspace itself never scrolls — each column scrolls internally so the
+   content can never slide up under the fixed tab bar */
+.bd-lock {
+  height: calc(100dvh - var(--chrome-h, 152px) - 30px);
+  overflow: hidden;
+}
+.bd-col {
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+.bd-col::-webkit-scrollbar {
+  width: 6px;
+}
+.bd-main {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow: hidden;
+}
+.bd-canvas {
+  position: relative;
+  min-height: 520px;
+  padding: 12px;
+  border: 1px solid var(--bd-line);
+  border-radius: 14px;
+  overflow: auto;
+  background: var(--bd-canvas);
+  background-image: radial-gradient(color-mix(in srgb, var(--bd-fg) 12%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.bd-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 250px;
+  gap: 26px;
+  min-width: 520px;
+}
+
+/* the blocks themselves */
+.bd-block {
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.75);
+  animation: dt-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.bd-block-h {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--bd-blue-d);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+html[data-theme="light"] .bd-block-h {
+  color: #10264d;
+}
+.bd-block-h span {
+  opacity: 0.75;
+  font-size: 9px;
+}
+.bd-block-b {
+  padding: 9px;
+  background: var(--bd-blue);
+  color: var(--bd-blue-fg);
+  font-size: 10px;
+  line-height: 1.9;
+}
+.bd-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 0;
+}
+.bd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border: 1px solid color-mix(in srgb, var(--bd-chip-fg) 22%, transparent);
+  border-radius: 4px;
+  background: var(--bd-chip);
+  color: var(--bd-chip-fg);
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bd-chip-v {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--bd-blue-fg);
+  border-color: transparent;
+  border-radius: 3px;
+}
+.bd-chip-v em {
+  font-style: normal;
+  opacity: 0.6;
+  margin-right: 3px;
+}
+.bd-sw {
+  display: inline-block;
+  width: 26px;
+  height: 13px;
+  border-radius: 99px;
+  border: 1px solid color-mix(in srgb, var(--bd-chip-fg) 30%, transparent);
+  background: #fff;
+  position: relative;
+}
+.bd-sw.on {
+  background: var(--bd-grad);
+}
+.bd-sw i {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 99px;
+  background: #1d2b4a;
+}
+.bd-sw.on i {
+  left: auto;
+  right: 1px;
+  background: #fff;
+}
+.bd-nest {
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 2px solid color-mix(in srgb, var(--bd-blue-fg) 45%, transparent);
+}
+.bd-trash {
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bd-fg) 8%, transparent);
+  color: var(--bd-sub);
+  cursor: pointer;
+  transition: transform 0.3s, color 0.3s, background 0.3s;
+}
+.bd-trash:hover {
+  transform: translateY(-3px) scale(1.05);
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+}
+.bd-trash svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* right rail */
+.bd-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--bd-line);
+}
+.bd-tab {
+  flex: 1;
+  padding: 11px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--bd-sub);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s;
+}
+.bd-tab:hover {
+  color: var(--bd-fg);
+}
+.bd-tab.on {
+  color: var(--bd-fg);
+  font-weight: 800;
+}
+.bd-tab.on::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 9px;
+  background: var(--bd-grad);
+}
+.bd-body {
+  padding: 14px;
+}
+.bd-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+.bd-btn-g {
+  padding: 11px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(115deg, #c9d3e4, #dfe6f1 55%, #c3cfe3);
+  color: #24334e;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition: transform 0.28s, box-shadow 0.28s;
+}
+html[data-theme="dark"] .bd-btn-g,
+html:not([data-theme="light"]) .bd-btn-g {
+  background: linear-gradient(115deg, #2b3752, #3d4c6d 55%, #253149);
+  color: #e8efff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.bd-btn-g:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px -14px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.bd-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 10px;
+  padding: 14px;
+  border-top: 1px solid var(--bd-line);
+  background: color-mix(in srgb, var(--bd-fg) 5%, transparent);
+}
+.bd-stat {
+  text-align: center;
+}
+.bd-stat .k {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bd-fg);
+}
+.bd-stat .v {
+  margin-top: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--bd-sub);
+}
+.bd-cube {
+  display: grid;
+  place-items: center;
+  padding: 18px 0 6px;
+  color: var(--bd-sub);
+  opacity: 0.85;
+}
+.bd-reset {
+  margin: 14px;
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(115deg, #0b1a4a, #1a8ee0);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.28s, box-shadow 0.28s;
+}
+.bd-reset:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -16px rgba(26, 142, 224, 0.9);
+}
+
+/* bottom run bar */
+.bd-runbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  background: var(--bd-panel);
+  border: 1px solid var(--bd-line);
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+.bd-run {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 26px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(115deg, #0b1a4a, #1a8ee0);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.28s, box-shadow 0.28s, filter 0.28s;
+}
+.bd-run:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+.bd-run.stop {
+  background: linear-gradient(115deg, #7a1020, #e0413f);
+}
+.bd-fx {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 14px;
+  border-radius: 9px;
+  background: color-mix(in srgb, #12c9a0 14%, transparent);
+  border: 1px solid color-mix(in srgb, #12c9a0 40%, transparent);
+  color: #0f9d80;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.bd-fx b {
+  font-size: 14px;
+  color: #0f9d80;
+}
+/* paper-mode run control — sits at the right end of the status line */
+.bd-paper {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(115deg, #0b1a4a, #1a8ee0);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -14px rgba(26, 142, 224, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.28s, filter 0.28s, box-shadow 0.28s, background 0.35s;
+}
+.bd-paper:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+.bd-paper i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #7dffd4;
+  box-shadow: 0 0 8px #7dffd4;
+}
+.bd-paper.on {
+  background: linear-gradient(115deg, #7a1020, #e0413f);
+  box-shadow: 0 12px 26px -14px rgba(224, 65, 63, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  animation: dt-hotpulse 1.9s ease-in-out infinite;
+}
+.bd-paper.on i {
+  background: #ffd8d8;
+  box-shadow: 0 0 8px #ffd8d8;
+  animation: dt-blink 1.2s ease-in-out infinite;
+}
+
+.bd-clock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--bd-sub);
+}
+@media (max-width: 1180px) {
+  .bd-paper {
+    margin-left: 0;
+  }
+}
+
+/* ================================================================
+   SIGNAL AI  —  the tools bar floats as a sticky island
+   The Run control lives up in the fixed chrome, so it never moves;
+   this bar sticks right beneath it and the tool content scrolls under.
+   ================================================================ */
+.sig-island {
+  position: sticky;
+  top: calc(var(--chrome-h, 152px) + 8px);
+  z-index: 25;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--app-2) 88%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 22px 44px -26px rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  transition: box-shadow 0.35s, border-color 0.35s;
+}
+html[data-theme="light"] .sig-island {
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 22px 44px -30px rgba(15, 23, 42, 0.4), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+/* a soft shelf under the island so content reads as passing beneath it */
+.sig-island::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -12px;
+  height: 12px;
+  border-radius: 0 0 16px 16px;
+  background: linear-gradient(180deg, var(--line), transparent);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ================================================================
+   AMBIENT LIFE  —  cursor spotlight + live dot sheen + logo shine
+   ================================================================ */
+.spot {
+  position: fixed;
+  z-index: 1;
+  width: 620px;
+  height: 620px;
+  margin: -310px 0 0 -310px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background: radial-gradient(circle, rgba(41, 211, 245, 0.13), rgba(123, 92, 255, 0.07) 42%, transparent 68%);
+  mix-blend-mode: screen;
+}
+html[data-theme="light"] .spot {
+  background: radial-gradient(circle, rgba(41, 160, 245, 0.16), rgba(123, 92, 255, 0.08) 42%, transparent 68%);
+  mix-blend-mode: multiply;
+}
+@media (hover: none) {
+  .spot {
+    display: none;
+  }
+}
+
+/* the app-background grid drifts very slowly so the page never feels frozen */
+@keyframes dt-drift-grid {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 58px 58px, 58px 58px;
+  }
+}
+.amb-grid-live {
+  animation: dt-drift-grid 90s linear infinite;
+}
+
+/* the top-bar logo gets a soft travelling shine */
+.logo-shine {
+  position: relative;
+  overflow: hidden;
+}
+.logo-shine::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-180%) rotate(16deg);
+  animation: dt-dshine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ================================================================
+   LIVE ORB  —  pulsing core with a circle + square orbiting it
+   ================================================================ */
+@keyframes dt-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.live-orb {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.live-core {
+  width: 34%;
+  height: 34%;
+  border-radius: 99px;
+  animation: dt-blink 1.6s ease-in-out infinite;
+}
+.live-orb .orbit {
+  position: absolute;
+  inset: 0;
+  animation: dt-orbit 2.8s linear infinite;
+}
+.live-orb .orbit.o2 {
+  inset: -22%;
+  animation-duration: 4.6s;
+  animation-direction: reverse;
+}
+.live-orb .orbit i,
+.live-orb .orbit b {
+  position: absolute;
+  left: 50%;
+  display: block;
+}
+/* the circle */
+.live-orb .orbit i {
+  top: -2.5px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 99px;
+}
+/* the square */
+.live-orb .orbit b {
+  bottom: -2px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 1.5px;
+}
+.live-orb .live-halo {
+  position: absolute;
+  inset: -1px;
+  border-radius: 99px;
+  animation: dt-live-halo 2.4s ease-out infinite;
+}
+
+/* shimmering live label */
+@keyframes dt-live-text {
+  0% {
+    background-position: 180% 50%;
+  }
+  100% {
+    background-position: -80% 50%;
+  }
+}
+.live-text {
+  background-image: linear-gradient(100deg, var(--lt-c, #12c9a0) 24%, #ffffff 46%, var(--lt-c, #12c9a0) 68%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dt-live-text 3.6s linear infinite;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--lt-c, #12c9a0) 45%, transparent));
+}
+html[data-theme="light"] .live-text {
+  background-image: linear-gradient(100deg, var(--lt-c, #04765f) 24%, #ffffff 46%, var(--lt-c, #04765f) 68%);
+}
+
+/* ================================================================
+   FIRE WAVES  —  emitted from the flame cluster while signals are live
+   ================================================================ */
+@keyframes dt-firewave {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+@keyframes dt-ember {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx, 8px), -44px) scale(0.25);
+    opacity: 0;
+  }
+}
+@keyframes dt-heat {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateY(-2px) scale(1.1);
+  }
+}
+.hot-waves {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.hot-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 19px;
+  border: 2px solid rgba(255, 165, 60, 0.75);
+  box-shadow: 0 0 14px rgba(255, 140, 45, 0.5);
+  animation: dt-firewave 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.hot-embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+.hot-ember {
+  position: absolute;
+  bottom: 12px;
+  width: 4px;
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #ffe14d, #ff7a1f);
+  box-shadow: 0 0 9px #ff8a3d;
+  opacity: 0;
+  animation: dt-ember 2.3s ease-out infinite;
+}
+.hot-heat {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 76%;
+  height: 62%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 150, 45, 0.55), rgba(255, 90, 20, 0.18) 55%, transparent 74%);
+  filter: blur(10px);
+  pointer-events: none;
+  animation: dt-heat 1.8s ease-in-out infinite;
+}
+
+/* live status pill pulse (already blink-based elsewhere, this adds a halo) */
+@keyframes dt-live-halo {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(18, 201, 160, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(18, 201, 160, 0);
+  }
+}
+.live-halo {
+  animation: dt-live-halo 2.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spot,
+  .amb-grid-live,
+  .logo-shine::after,
+  .live-halo {
+    animation: none !important;
+  }
+}
+
+/* theme toggle switch */
+.theme-sw {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--bar-line);
+  background: var(--bar-chip);
+}
+.theme-sw button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--bar-sub);
+  cursor: pointer;
+  transition: color 0.3s, background 0.3s, transform 0.3s;
+}
+.theme-sw button:hover {
+  transform: translateY(-1px);
+}
+.theme-sw button[data-on="true"] {
+  background: linear-gradient(140deg, #29d3f5, #7b5cff);
+  color: #fff;
+  box-shadow: 0 8px 18px -8px rgba(41, 211, 245, 0.9);
+}
+.theme-sw svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ================= NAV TABS ================= */
+@keyframes dt-draw {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes dt-ringpulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 70%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 12px color-mix(in srgb, currentColor 0%, transparent);
+  }
+}
+@keyframes dt-wiggle {
+  0%,
+  7%,
+  100% {
+    transform: none;
+  }
+  2% {
+    transform: translateY(-3px) rotate(-7deg) scale(1.05);
+  }
+  4.5% {
+    transform: translateY(2px) rotate(6deg) scale(0.97);
+  }
+}
+@keyframes dt-spark {
+  0%,
+  100% {
+    transform: scale(1) rotate(0);
+    filter: drop-shadow(0 0 0 currentColor);
+  }
+  50% {
+    transform: scale(1.22) rotate(18deg);
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+@keyframes dt-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes dt-flash {
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  40% {
+    opacity: 0.55;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes dt-fan {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.06);
+  }
+}
+@keyframes dt-scanline {
+  0% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(6px);
+  }
+}
+@keyframes dt-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.4);
+    opacity: 0;
+  }
+}
+@keyframes dt-beacon {
+  0% {
+    transform: translateX(-140px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 140px));
+  }
+}
+@keyframes dt-label {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes dt-flick {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.08;
+  }
+}
+/* ============ Bot name typography ============ */
+@keyframes dt-title {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 220% 50%;
+  }
+}
+@keyframes dt-title-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.bot-title {
+  position: relative;
+  display: inline-block;
+  font-weight: 900;
+  letter-spacing: 0.005em;
+  line-height: 1.1;
+  background-image: linear-gradient(
+    100deg,
+    #ffffff 6%,
+    var(--t-a, #29d3f5) 32%,
+    #ffffff 52%,
+    var(--t-b, #7b5cff) 76%,
+    #ffffff 96%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dt-title 7s linear infinite;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.92));
+}
+.bot-title-sm {
+  font-size: 14.5px;
+}
+.bot-title-lg {
+  font-size: 22px;
+}
+
+/* holographic rule under the name */
+.bot-rule {
+  position: relative;
+  height: 2px;
+  width: 42px;
+  margin-top: 5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--t-a, #29d3f5), transparent);
+  box-shadow: 0 0 10px var(--t-a, #29d3f5);
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .bot-rule {
+  width: 86px;
+}
+.bot-rule::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, var(--t-a, #29d3f5), transparent);
+  filter: blur(6px);
+  animation: dt-title-glow 3.4s ease-in-out infinite;
+}
+
+@keyframes dt-tickpop {
+  0% {
+    transform: scale(1.42);
+    opacity: 0.5;
+    filter: drop-shadow(0 0 14px var(--yellow));
+  }
+  60% {
+    transform: scale(0.96);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes dt-tickbar {
+  0% {
+    transform: translateY(-2px) scaleY(1.06);
+    filter: brightness(1.9);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+.A-tickpop {
+  animation: dt-tickpop 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.A-tickbar {
+  animation: dt-tickbar 0.3s ease-out both;
+  transform-origin: bottom;
+}
+@keyframes dt-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-16deg);
+  }
+  100% {
+    transform: translateX(420%) skewX(-16deg);
+  }
+}
+
+.dt-rail {
+  position: relative;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: linear-gradient(180deg, #08102f 0%, #050a22 100%);
+}
+.dt-rail::-webkit-scrollbar {
+  display: none;
+}
+.dt-track {
+  position: relative;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+}
+
+/* moving pill */
+.dt-pill {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  bottom: 8px;
+  border-radius: 14px;
+  pointer-events: none;
+  transition:
+    transform 0.62s cubic-bezier(0.34, 1.42, 0.5, 1),
+    width 0.62s cubic-bezier(0.34, 1.42, 0.5, 1),
+    background 0.45s ease,
+    box-shadow 0.45s ease;
+}
+.dt-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 55%);
+  opacity: 0.6;
+}
+.dt-pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.34),
+    transparent
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: dt-sweep 3.6s ease-in-out infinite;
+}
+.dt-trail {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  bottom: 12px;
+  border-radius: 14px;
+  filter: blur(11px);
+  opacity: 0.6;
+  pointer-events: none;
+  transition:
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.5s ease;
+}
+.dt-ring-out {
+  position: absolute;
+  top: 50%;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  animation: dt-burst 0.7s ease-out forwards;
+}
+/* (travelling beacon removed — read as a wave sweeping across the rail) */
+
+/* tab */
+.tab {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 9px;
+  border-radius: 14px;
+  padding: 9px 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #93a6d4;
+  transition:
+    color 0.35s,
+    transform 0.4s cubic-bezier(0.34, 1.42, 0.5, 1);
+}
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.35s;
+  background: radial-gradient(
+    90px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(120, 200, 255, 0.26),
+    transparent 66%
+  );
+}
+.tab:hover::before {
+  opacity: 1;
+}
+.tab:hover {
+  color: #e9f1ff;
+  transform: translateY(-2px);
+}
+/* the active tab's colour is its OWN accent (set inline as `color`),
+   so the halo, trim, top-tab, dot and icon rings all pick it up */
+.tab[data-active="true"] {
+  transform: translateY(-1px) scale(1.035);
+}
+.tab .lbl {
+  position: relative;
+  white-space: nowrap;
+  transition: letter-spacing 0.45s;
+}
+.tab[data-active="true"] .lbl {
+  color: #fff;
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 0 4px currentColor,
+    0 0 16px currentColor,
+    0 1px 0 rgba(0, 0, 0, 0.35);
+  animation: dt-label 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* breathing halo in the tab's own accent */
+@keyframes dt-halo-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.07);
+  }
+}
+.tab .halo {
+  position: absolute;
+  inset: -4px -3px;
+  border-radius: 17px;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 78% at 50% 50%,
+    color-mix(in srgb, currentColor 46%, transparent),
+    transparent 74%
+  );
+  filter: blur(9px);
+  animation: dt-halo-breathe 2.6s ease-in-out infinite;
+}
+
+/* the icon becomes a filled accent tile on the active tab */
+.tab[data-active="true"] .ico {
+  background: color-mix(in srgb, currentColor 30%, transparent);
+  box-shadow:
+    0 0 0 1.5px currentColor,
+    0 0 18px -4px currentColor,
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.tab[data-active="true"] .ico svg {
+  color: #fff;
+}
+/* accent-tinted inner ring so the tile looks beveled */
+.tab[data-active="true"] .ico-ring2 {
+  border-color: #fff;
+  opacity: 0.45;
+}
+
+.ico {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.42, 0.5, 1);
+}
+.tab:hover .ico {
+  transform: scale(1.12) rotate(-4deg);
+}
+.tab[data-active="true"] .ico {
+  transform: scale(1.1);
+}
+.ico-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  border: 1px dashed currentColor;
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.ico-ring2 {
+  position: absolute;
+  inset: 3px;
+  border-radius: 9px;
+  border: 1px solid currentColor;
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.tab:hover .ico-ring,
+.tab[data-active="true"] .ico-ring {
+  opacity: 0.5;
+  animation: dt-spin 7s linear infinite;
+}
+.tab:hover .ico-ring2,
+.tab[data-active="true"] .ico-ring2 {
+  opacity: 0.3;
+  animation: dt-flick 2.4s ease-in-out infinite;
+}
+.ico svg {
+  width: 20px;
+  height: 20px;
+  overflow: visible;
+}
+.tab[data-active="true"] .ico svg path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dt-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ============ resting tab icons — always alive, never static ============
+   Each icon runs its own loop *and* a periodic twitch so the rail feels
+   like a live instrument panel even when nothing is hovered.            */
+.tab:not([data-active="true"]) .ico svg {
+  animation:
+    dt-wiggle 7.5s ease-in-out infinite,
+    var(--idle-anim, dt-bob) 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.7s), calc(var(--i, 0) * 0.42s);
+}
+.tab:not([data-active="true"]) .ico {
+  animation: dt-idle-glow 4.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.55s);
+}
+/* per-tab idle motion profiles (set inline as --idle-anim) */
+@keyframes dt-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3.5px);
+  }
+}
+@keyframes dt-nod {
+  0%,
+  100% {
+    transform: translateX(-1.5px);
+  }
+  50% {
+    transform: translateX(1.5px);
+  }
+}
+@keyframes dt-swing {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+@keyframes dt-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+}
+@keyframes dt-tick-spin {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(22deg);
+  }
+}
+@keyframes dt-sweep-y {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+@keyframes dt-idle-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    opacity: 0.9;
+  }
+  50% {
+    filter: drop-shadow(0 0 7px var(--idle-c, rgba(41, 211, 245, 0.7)));
+    opacity: 1;
+  }
+}
+@keyframes dt-idle-sheen {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -130% 0;
+  }
+}
+/* the rail's own travelling sheen, always drifting */
+.tab:not([data-active="true"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 38%, rgba(255, 255, 255, 0.07) 50%, transparent 62%);
+  background-size: 240% 100%;
+  background-repeat: no-repeat;
+  animation: dt-idle-sheen 5.5s linear infinite;
+  animation-delay: calc(var(--i, 0) * 0.5s);
+}
+
+/* per-icon motion (hover + active) */
+.tab:hover .ico-gear svg,
+.tab[data-active="true"] .ico-gear svg {
+  animation: dt-spin 3.4s linear infinite;
+}
+.tab:hover .ico-spark svg,
+.tab[data-active="true"] .ico-spark svg {
+  animation: dt-spark 1.5s ease-in-out infinite;
+}
+.tab:hover .ico-bob svg,
+.tab[data-active="true"] .ico-bob svg {
+  animation: dt-bob 2.2s ease-in-out infinite;
+}
+.tab:hover .ico-flash svg,
+.tab[data-active="true"] .ico-flash svg {
+  animation: dt-flash 1.7s ease-in-out infinite;
+}
+.tab:hover .ico-fan svg,
+.tab[data-active="true"] .ico-fan svg {
+  animation: dt-fan 2.4s ease-in-out infinite;
+}
+.tab:hover .ico-radar svg,
+.tab[data-active="true"] .ico-radar svg {
+  animation: dt-spin 2.6s linear infinite;
+}
+.tab:hover .ico-scan .scanline,
+.tab[data-active="true"] .ico-scan .scanline {
+  animation: dt-scanline 1.1s ease-in-out infinite alternate;
+}
+.tab[data-active="true"] .ico {
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+/* active tab trims */
+.tab .trim {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 0;
+  border-radius: 99px;
+  opacity: 0;
+  background: currentColor;
+  transition:
+    width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s;
+}
+.tab[data-active="true"] .trim {
+  width: 54%;
+  opacity: 1;
+  bottom: 2px;
+  box-shadow: 0 0 10px currentColor;
+}
+.tab .toptab {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 0;
+  opacity: 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  transition:
+    width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s;
+}
+.tab[data-active="true"] .toptab {
+  width: 76%;
+  opacity: 0.95;
+}
+.tab .dotp {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 99px;
+  background: currentColor;
+  opacity: 0;
+}
+.tab[data-active="true"] .dotp {
+  opacity: 1;
+  animation: dt-ringpulse 2s ease-out infinite;
+}
+
+/* ============ Continuous rolling strip ============ */
+.dt-track {
+  will-change: transform;
+}
+.dt-marquee:hover .dt-track {
+  animation-play-state: paused;
+}
+.dt-marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-track,
+  .A-spin,
+  .A-spin-r,
+  .A-float,
+  .A-glow {
+    animation: none !important;
+  }
+}
+
+/* ================================================================
+   LANDING PAGE  —  light-free duotone theme
+   palette: bg #05080f · teal #00d4aa · coral #ff4757
+   ================================================================ */
+.lp {
+  --bg: #05080f;
+  --panel: #080c1a;
+  --teal: #00d4aa;
+  --teal-lo: #00e6b9;
+  --red: #ff4757;
+  --red-lo: #ff5564;
+  --t1: rgba(255, 255, 255, 0.95);
+  --t2: rgba(255, 255, 255, 0.62);
+  --t3: rgba(255, 255, 255, 0.42);
+  --line: rgba(255, 255, 255, 0.08);
+  --line2: rgba(255, 255, 255, 0.14);
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--t1);
+  font-family: "IBM Plex Sans", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+.lp .mono {
+  font-family: ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* background layers */
+.lp-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 54px 54px;
+  pointer-events: none;
+}
+.lp-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(75% 75% at 50% 35%, rgba(5, 8, 15, 0.35) 0%, rgba(5, 8, 15, 0.94) 100%);
+  pointer-events: none;
+}
+
+/* glass card */
+.lp-card {
+  position: relative;
+  background: rgba(8, 12, 26, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  backdrop-filter: blur(26px);
+  box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.04), 0 30px 60px rgba(0, 0, 0, 0.55);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s, box-shadow 0.4s;
+}
+.lp-card-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 212, 170, 0.4);
+  box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.14), 0 34px 70px rgba(0, 0, 0, 0.6), 0 0 46px rgba(0, 212, 170, 0.09);
+}
+
+/* pills + buttons */
+.lp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.lp-pill-teal {
+  color: var(--teal);
+  background: rgba(0, 212, 170, 0.08);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+}
+.lp-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 6px rgba(0, 212, 170, 0.8);
+  animation: lpPulse 1.4s ease-in-out infinite;
+}
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #041410;
+  background: linear-gradient(90deg, var(--teal-lo), var(--teal));
+  box-shadow: 0 18px 38px -16px rgba(0, 212, 170, 0.85);
+  transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+  cursor: pointer;
+}
+.lp-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 48px -16px rgba(0, 212, 170, 0.95);
+  filter: brightness(1.06);
+}
+.lp-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 13px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--t1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line2);
+  transition: transform 0.3s, border-color 0.3s, background 0.3s;
+  cursor: pointer;
+}
+.lp-btn-ghost:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 212, 170, 0.45);
+  background: rgba(0, 212, 170, 0.07);
+}
+
+/* headline glow */
+.lp-glow-teal {
+  color: var(--teal);
+  filter: drop-shadow(0 0 22px rgba(0, 212, 170, 0.45));
+}
+.lp-glow-red {
+  color: var(--red);
+  filter: drop-shadow(0 0 22px rgba(255, 71, 87, 0.4));
+}
+
+/* animated candlestick background strip */
+.lp-candles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  padding-left: 20px;
+  animation: lpScroll 38s linear infinite;
+  opacity: 0.28;
+}
+.lp-candle {
+  position: relative;
+  width: 44px;
+  flex: 0 0 auto;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lp-candle i {
+  display: block;
+  width: 2px;
+  border-radius: 1px;
+}
+.lp-candle span {
+  display: block;
+  width: 44px;
+  border-radius: 3px;
+}
+.lp-dollar {
+  position: absolute;
+  font-family: ui-monospace, monospace;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.055);
+  animation: lpDollar linear infinite;
+  user-select: none;
+}
+
+@keyframes lpPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.72);
+  }
+}
+@keyframes lpScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes lpDollar {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(-6deg);
+  }
+  8% {
+    opacity: 0.06;
+  }
+  88% {
+    opacity: 0.06;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-115vh) rotate(6deg);
+  }
+}
+@keyframes lpGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.05), 0 40px 80px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.18), 0 40px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 212, 170, 0.06);
+  }
+}
+.lp-live {
+  animation: lpGlow 3s ease-in-out infinite;
+}
