@@ -9,6 +9,7 @@ import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
 import Dialog from '@/components/shared_ui/dialog';
 import MobileWrapper from '@/components/shared_ui/mobile-wrapper';
 import Tabs from '@/components/shared_ui/tabs/tabs';
+import DigitToolsTabs from '@/components/digit-tools-tabs/DigitToolsTabs';
 import TradeTypeConfirmationModal from '@/components/trade-type-confirmation-modal';
 import TradingViewModal from '@/components/trading-view-chart/trading-view-modal';
 import { DBOT_TABS, TAB_IDS } from '@/constants/bot-contents';
@@ -326,7 +327,7 @@ const AppWrapper = observer(() => {
                 >
                     <div>
                         {!isDesktop && left_tab_shadow && <span className='tabs-shadow tabs-shadow--left' />}
-                        <Tabs active_index={active_tab} className='main__tabs' onTabItemClick={handleTabChange} top>
+                        <DigitToolsTabs active_index={active_tab} onTabItemClick={handleTabChange}>
                             {/* 0 — Dashboard */}
                             <div
                                 label={<TabLabel colorIndex={0} icon={<LabelPairedObjectsColumnCaptionRegularIcon height='20px' width='20px' fill='currentColor' />} text={<Localize i18n_default_text='Dashboard' />} />}
@@ -400,7 +401,7 @@ const AppWrapper = observer(() => {
                                     <CustomIframePage url={tab.url} name={tab.name} icon={tab.icon} />
                                 </div>
                             ))}
-                        </Tabs>
+                        </DigitToolsTabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}
                     </div>
                 </div>
